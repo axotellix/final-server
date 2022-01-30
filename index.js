@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -6,16 +5,29 @@ const upload = require('express-fileupload');
 const fetch = require('cross-fetch');
 
 
+
 app.set('view engine', 'ejs');  
 
 app.use(cors());
 app.use(upload());
 
+app.get('/', function (req, res) {
+    res.send('hello from root level!')
+})   
+
+// if( process.env.NODE_ENV !== 'production') {
+//     app.use(express.static('client/src'))
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.resolve(__dirname, 'client', 'src', 'app.html'))
+//     })
+// }
+  
 
 app.post('/upload', async (request, result) => {
 
     let image = request.files.img;
-    //console.log(image.data);
+    //test: server routing 
+    result.send(image.data)
 
     try {
 
@@ -77,4 +89,4 @@ app.post('/getimg', async (request, result) => {
 
 })
 
-app.listen(3333);
+app.listen(4000);
