@@ -26,8 +26,6 @@ app.get('/', function (req, res) {
 app.post('/upload', async (request, result) => {
 
     let image = request.files.img;
-    //test: server routing 
-    result.send(image.data)
 
     try {
 
