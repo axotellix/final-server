@@ -3,34 +3,38 @@ const app = express();
 const cors = require('cors');
 const upload = require('express-fileupload');
 const fetch = require('cross-fetch');
+const path = require('path');
 
 
-
+// [ SYSTEM SETTINGS ]
 app.set('view engine', 'ejs');  
-
 app.use(cors());
 app.use(upload());
 
+// [ PRESETS ]
+const api   = 'http://rsandrey.pythonanywhere.com/'
+const front = 'https://final-axotellix.vercel.app/'
+
+
+// [ ROUTES ]
 app.get('/', function (req, res) {
     res.send('hello from root level!')
-})   
+})
 
-// if( process.env.NODE_ENV !== 'production') {
-//     app.use(express.static('client/src'))
-//     app.get('*', (req, res) => {
-//         res.sendFile(path.resolve(__dirname, 'client', 'src', 'app.html'))
-//     })
-// }
-  
+app.get('/random-img', function (req, res) {
+    const max = 3
+    const min = 1
+    let rand = Math.floor(Math.random() * (max - min + 1)) + min;
+    res.sendFile(path.resolve(__dirname + '/static/img/test_dataset/' + rand + '.png'))
+}) 
 
 app.post('/upload', async (request, result) => {
 
     let image = request.files.img;
 
     try {
-
         // update > image with defects highlighted
-        await fetch("https://final.teambolognese.ru/api/detail", {
+        await fetch(api + "api/detail", {
             mode: 'cors',
             method: "POST",
             headers: {
@@ -41,7 +45,7 @@ app.post('/upload', async (request, result) => {
         })
 
         // require > status, defect rate
-        let req = await fetch("https://final.teambolognese.ru/api/detect", {
+        let req = await fetch(api + "api/detect", {
             mode: 'cors',
             method: "POST",
             headers: {
@@ -53,9 +57,10 @@ app.post('/upload', async (request, result) => {
 
         // receive > data | redirect > back
         let res = await req.json()
+        console.log(res)
         let status = res.Status
         let percent = await res.percent
-        result.redirect('http://localhost:3000/zoneB?status=' + status + '&percent=' + percent)
+        result.redirect(front + 'zoneB?status=' + status + '&percent=' + percent)
 
     } catch(err) {
         console.log('error occured:', err);
@@ -67,10 +72,9 @@ app.post('/upload', async (request, result) => {
 app.post('/getimg', async (request, result) => {
 
     let image = request.files.img;
-    //console.log(image.data);
 
     try {
-        let req = await fetch("https://final.teambolognese.ru/api/detail", {
+        let req = await fetch(api + "api/detail", {
             mode: 'cors',
             method: "POST",
             headers: {
@@ -80,7 +84,7 @@ app.post('/getimg', async (request, result) => {
             body: image.data
         })
 
-        result.redirect('http://localhost:3000/zoneC?state=received')
+        result.redirect(front+ 'zoneC?state=received')
     } catch(err) {
         console.log('error occured:', err);
     }
