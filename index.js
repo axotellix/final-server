@@ -84,7 +84,7 @@ app.post('/getimg', async (request, result) => {
             body: image.data
         })
 
-        result.redirect(front+ 'zoneC?state=received')
+        result.redirect(front + 'zoneC?state=received')
     } catch(err) {
         console.log('error occured:', err);
     }
